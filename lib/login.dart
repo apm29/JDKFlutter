@@ -44,7 +44,6 @@ class LoginState extends State<LoginWidget> {
                 new Expanded(
                     flex: 2,
                     child: new TextField(
-                      controller: new TextEditingController(),
                       decoration: new InputDecoration(hintText: '验证码'),
                       style: new TextStyle(fontSize: 18.0, color: Colors.black),
                       onChanged: (txt) {
@@ -80,6 +79,7 @@ class LoginState extends State<LoginWidget> {
 
   @override
   void dispose() {
+    super.dispose();
     if (timer != null) timer.cancel();
   }
 
@@ -100,7 +100,7 @@ class LoginState extends State<LoginWidget> {
                 : "(${60-count.elapsed
                 .inSeconds})秒后重发";
             inCount = count.elapsed.inSeconds < 60;
-            print(sendText);
+            //print(sendText);
           });
         });
       }

@@ -84,8 +84,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void profile(BuildContext context) async {
-    final response =
-        await http.get('https://jsonplaceholder.typicode.com/posts/1');
 
     final token = await SPUtils.get(access_token);
     final postResp = await http.post(profile_url,

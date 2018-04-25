@@ -24,6 +24,7 @@ class LoginResult {
   // ignore: non_constant_identifier_names
   String access_token;
 
+  // ignore: non_constant_identifier_names
   LoginResult({this.access_token});
 
   factory LoginResult.fromJson(Map<String,dynamic> json){

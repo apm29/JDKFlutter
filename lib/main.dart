@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:jkd_flutter/login.dart';
-import 'package:jkd_flutter/model/bean/BaseBean.dart';
-import 'utils/api_const.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'utils/sp_utils.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:jkd_flutter/login.dart';
+
+import 'utils/api_const.dart';
+import 'utils/sp_utils.dart';
+
 var myApp = new MyApp();
 void main() {
-
   return runApp(myApp);
 }
 
@@ -56,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isFirst = true;
   @override
   Widget build(BuildContext context) {
-    if(isFirst) {
+    if (isFirst) {
       _startTimer(context);
     }
     // This method is rerun every time setState is called, for instance as done
@@ -75,7 +76,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _startTimer(BuildContext context) {
     print('start timer : 2000ms');
-    new Timer(new Duration(seconds: 2), (){_getProfile(context);});
+    new Timer(new Duration(seconds: 2), () {
+      _getProfile(context);
+    });
   }
 
   void _getProfile(BuildContext context) {
@@ -84,14 +87,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void profile(BuildContext context) async {
-
-    final token = await SPUtils.get(access_token);
+    final token = await SPUtils.get(access_token) ?? '';
+    print("{'access_token':$token}");
     final postResp = await http.post(profile_url,
         headers: public_header, body: "{'access_token':$token}");
     try {
       var map = json.decode(postResp.body);
-      var baseBean = BaseBean.fromJson(map);
-      if (baseBean.isSuccess()) {
+      print(postResp.body);
+      if (map['code'] == 200) {
         toMain(context);
       } else {
         toLogin(context);
@@ -108,10 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void toLogin(BuildContext context) {
     print('to login');
-    Navigator.of(context).pop();
-    Navigator.of(context).push(
-         new MaterialPageRoute(builder: (context) => new LoginWidget())
-    );
+    Navigator
+        .of(context)
+        .push(new MaterialPageRoute(builder: (context) => new LoginWidget()));
     isFirst = false;
   }
 
@@ -144,5 +146,4 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     print('initState');
   }
-
 }

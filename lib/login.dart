@@ -1,5 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:jkd_flutter/model/api/api_interface.dart';
+import 'package:flutter/src/scheduler/ticker.dart';
+import 'package:http/http.dart' as http;
+import 'package:jkd_flutter/model/api/api_interface.dart' as api;
+import 'package:jkd_flutter/utils/api_const.dart';
+import 'package:jkd_flutter/utils/sp_utils.dart';
 import 'package:quiver/async.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -9,7 +16,7 @@ class LoginWidget extends StatefulWidget {
   }
 }
 
-class LoginState extends State<LoginWidget> {
+class LoginState extends State<LoginWidget> implements TickerProvider {
   String userName;
   String smsCode;
   BuildContext context;
@@ -17,6 +24,23 @@ class LoginState extends State<LoginWidget> {
   CountdownTimer timer;
   bool inCount = false;
   String sendText = "获取验证码";
+
+  AnimationController controller;
+  CurvedAnimation curve;
+
+  @override
+  void initState() {
+    controller = new AnimationController(
+        duration: const Duration(milliseconds: 5000), vsync: this);
+    curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+
+    controller.forward();
+  }
+
+  @override
+  Ticker createTicker(TickerCallback onTick) {
+    return new Ticker(onTick);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,16 +52,25 @@ class LoginState extends State<LoginWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new Text(
-              '登录',
-              style: new TextStyle(fontSize: 22.0),
+            new FadeTransition(
+              opacity: curve,
+              child: new FlutterLogo(
+                size: 100.0,
+              ),
+            ),
+            new FlatButton(
+              child: new Text(
+                '登录',
+                style: new TextStyle(fontSize: 22.0),
+              ),
+              onPressed: () => controller.repeat(),
             ),
             new TextField(
               decoration: new InputDecoration(hintText: '用户名'),
               style: new TextStyle(fontSize: 18.0, color: Colors.black),
               onChanged: (txt) {
                 userName = txt;
-              }, 
+              },
             ),
             new Row(
               children: <Widget>[
@@ -49,7 +82,6 @@ class LoginState extends State<LoginWidget> {
                       onChanged: (txt) {
                         smsCode = txt;
                       },
-
                     )),
                 new Expanded(
                     child: new RaisedButton(
@@ -87,9 +119,10 @@ class LoginState extends State<LoginWidget> {
     if (userName == null || userName.length < 11) {
       showToast("用户名不正确");
     } else {
-      var loginResult = await API.sendSms(userName);
-      showToast(loginResult.msg);
-      if (loginResult.isSuccess()) {
+      http.Response response = await api.API.sms(userName);
+      Map<String, dynamic> loginResult = json.decode(response.body);
+      showToast(loginResult['msg']);
+      if (loginResult['code'] == 200) {
         inCount = true;
         timer = new CountdownTimer(
             new Duration(seconds: 60), new Duration(seconds: 1));
@@ -97,7 +130,7 @@ class LoginState extends State<LoginWidget> {
           setState(() {
             sendText = count.elapsed.inSeconds >= 60
                 ? "获取验证码"
-                : "(${60-count.elapsed
+                : "(${60 - count.elapsed
                 .inSeconds})秒后重发";
             inCount = count.elapsed.inSeconds < 60;
             //print(sendText);
@@ -123,9 +156,22 @@ class LoginState extends State<LoginWidget> {
         });
   }
 
-  void _login() async{
-    var baseBean = await API.login(smsCode, userName);
-    showToast(baseBean.msg);
-    print('login');
+  void _login() async {
+    print(login_url);
+    Map<String, dynamic> baseBean = await login(smsCode, userName);
+    showToast(baseBean['msg']);
+    if (baseBean['data'] != null && baseBean['code'] == 200) {
+//      var loginResult =
+//          LoginResult.fromJson(json.decode(baseBean.data.toString()));
+//      print('login access_token:' + loginResult.access_token);
+      Map<String, dynamic> loginResult = baseBean['data'];
+      SPUtils.put(access_token, loginResult['access_token']);
+      print("save_token:" + loginResult['access_token']);
+    }
+  }
+
+  Future<Map<String, dynamic>> login(String code, String mobile) async {
+    http.Response response = await api.API.login(mobile, code);
+    return json.decode(response.body);
   }
 }

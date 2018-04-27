@@ -5,7 +5,6 @@ import 'package:jkd_flutter/utils/sp_utils.dart';
 
 class API {
   static Future<http.Response> sms(String mobile) async {
-    var token = await SPUtils.get(access_token);
     print("""
             {
   	              "biz_content": {
@@ -13,8 +12,7 @@ class API {
   	              }
             }
             """);
-    var response = await http.post(sms_url,
-        headers: {'Content-Type': 'application/json; charset=utf-8'}, body: """
+    var response = await http.post(sms_url, headers: public_header, body: """
             {
   	              "biz_content": {
   		              "mobile": "$mobile"
@@ -30,11 +28,12 @@ class API {
   static const profile_url = base_url + '/v1/user/profile';
   static const sms_url = base_url + '/v1/user/send_sms';
   static const login_url = base_url + '/v1/user/login';
-  static const code = '888888';
-
+  static const application_url = base_url + '/v1/application/info';
+  static const Map<String, String> public_header = {
+    'Content-Type': 'application/json; charset=utf-8'
+  };
   static Future<http.Response> login(String mobile, String code) async {
-    print({'Content-Type': 'application/json; charset=utf-8'});
-    var token = SPUtils.get(access_token);
+    print(public_header);
     print("""
             {
 	              "biz_content": {
@@ -43,13 +42,50 @@ class API {
   	              }
             }
             """);
-    var response = await http.post(login_url,
-        headers: {'Content-Type': 'application/json; charset=utf-8'}, body: """
+    var response = await http.post(login_url, headers: public_header, body: """
             {
   	              "biz_content": {
   		              "mobile": "$mobile",
   		              "code": "$code"
   	              }
+            }
+            """);
+    print(response.body);
+
+    return response;
+  }
+
+  static Future<http.Response> application() async {
+    print(public_header);
+    var token = await SPUtils.get(access_token);
+    print("""
+            {
+	              "access_token": "$token"
+            }
+            """);
+    var response =
+        await http.post(application_url, headers: public_header, body: """
+            {
+	              "access_token": "$token"
+            }
+            """);
+    print(response.body);
+
+    return response;
+  }
+
+  static Future<http.Response> profile() async {
+    print(public_header);
+    var token = await SPUtils.get(access_token);
+    print("""
+            {
+	              "access_token": "$token"
+            }
+            """);
+    var response =
+        await http.post(profile_url, headers: public_header, body: """
+            {
+	              "access_token": "$token"
             }
             """);
     print(response.body);

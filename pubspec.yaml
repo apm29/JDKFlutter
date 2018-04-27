@@ -65,3 +65,4 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
   assets:
     - lib/image/splash.png
+    - lib/image/banner.png

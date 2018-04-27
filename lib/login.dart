@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:http/http.dart' as http;
 import 'package:jkd_flutter/model/api/api_interface.dart' as api;
-import 'package:jkd_flutter/utils/api_const.dart';
 import 'package:jkd_flutter/utils/sp_utils.dart';
 import 'package:quiver/async.dart';
 
@@ -30,6 +29,7 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
 
   @override
   void initState() {
+    super.initState();
     controller = new AnimationController(
         duration: const Duration(milliseconds: 5000), vsync: this);
     curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
@@ -83,12 +83,11 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
                         smsCode = txt;
                       },
                     )),
-                new Expanded(
-                    child: new RaisedButton(
+                new RaisedButton(
                   onPressed: inCount ? null : _smsSend,
                   color: Colors.yellow[500],
                   child: new Text(sendText),
-                ))
+                )
               ],
             ),
             new Container(
@@ -157,7 +156,7 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
   }
 
   void _login() async {
-    print(login_url);
+    print(api.API.login_url);
     Map<String, dynamic> baseBean = await login(smsCode, userName);
     showToast(baseBean['msg']);
     if (baseBean['data'] != null && baseBean['code'] == 200) {
@@ -165,8 +164,9 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
 //          LoginResult.fromJson(json.decode(baseBean.data.toString()));
 //      print('login access_token:' + loginResult.access_token);
       Map<String, dynamic> loginResult = baseBean['data'];
-      SPUtils.put(access_token, loginResult['access_token']);
+      SPUtils.put(api.API.access_token, loginResult['access_token']);
       print("save_token:" + loginResult['access_token']);
+      Navigator.pushNamed(context, '/main');
     }
   }
 

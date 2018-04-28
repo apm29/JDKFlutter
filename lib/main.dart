@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
 import 'package:jkd_flutter/theme.dart';
 import 'package:jkd_flutter/utils/sp_utils.dart';
@@ -48,6 +50,25 @@ class MainState extends State<MainWidget> {
     );
   }
 
+  static const MethodChannel methodChannel = const MethodChannel("yjw");
+
+  String _batteryLevel = 'Battery level: unknown.';
+  String _chargingStatus = 'Battery status: unknown.';
+
+  Future<Null> _getBatteryLevel() async {
+    String batteryLevel;
+    try {
+      final result = await methodChannel.invokeMethod('getBatteryLevel');
+      batteryLevel = 'Battery level: $result%.';
+    } on PlatformException {
+      batteryLevel = 'Failed to get battery level.';
+    }
+    print(batteryLevel);
+    setState(() {
+      _batteryLevel = batteryLevel;
+    });
+  }
+
   Column _getBody() {
     if (_currentIndex == 0)
       return new Column(
@@ -82,7 +103,7 @@ class MainState extends State<MainWidget> {
             child: new Center(
                 child: new RaisedButton(
               onPressed: _logout,
-              child: new Text("Logout"),
+              child: new Text(_batteryLevel),
 //              color: Colors.yellow[600],
             )),
           ),
@@ -175,7 +196,9 @@ class MainState extends State<MainWidget> {
     }
   }
 
-  void _toApplyInfo() {}
+  void _toApplyInfo() {
+    _getBatteryLevel();
+  }
 
   _getDrawer() {
     var themeList = kAllGalleryThemes.map((theme) {

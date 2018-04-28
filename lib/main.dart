@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
+import 'package:jkd_flutter/theme.dart';
 import 'package:jkd_flutter/utils/sp_utils.dart';
 
 class MainWidget extends StatefulWidget {
@@ -18,6 +19,8 @@ class MainState extends State<MainWidget> {
 
   String _buttonText = '立即放款';
 
+  var _themeData = kAllGalleryThemes[0].theme;
+
   @override
   void initState() {
     super.initState();
@@ -30,12 +33,14 @@ class MainState extends State<MainWidget> {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Main Page',
+      theme: _themeData,
       home: new Scaffold(
         body: _getBody(),
-        bottomNavigationBar: new CupertinoTabBar(
+        bottomNavigationBar: new BottomNavigationBar(
           items: _getNavigation(),
           currentIndex: _currentIndex,
           onTap: null,
+          type: BottomNavigationBarType.fixed,
         ),
         drawer: _getDrawer(),
         endDrawer: _getDrawer(),
@@ -57,7 +62,7 @@ class MainState extends State<MainWidget> {
                 child: new RaisedButton(
               onPressed: _toApplyInfo,
               child: new Text(_buttonText),
-              color: Colors.yellow[600],
+//              color: Colors.yellow[600],
             )),
           ),
         ],
@@ -70,7 +75,7 @@ class MainState extends State<MainWidget> {
             location: BannerLocation.topStart,
             child: new Container(
               height: 200.0,
-              color: Colors.blueGrey[500],
+//              color: Colors.blueGrey[500],
             ),
           ),
           new Expanded(
@@ -78,7 +83,7 @@ class MainState extends State<MainWidget> {
                 child: new RaisedButton(
               onPressed: _logout,
               child: new Text("Logout"),
-              color: Colors.yellow[600],
+//              color: Colors.yellow[600],
             )),
           ),
         ],
@@ -100,6 +105,8 @@ class MainState extends State<MainWidget> {
           padding: EdgeInsets.all(0.0),
           icon: new Icon(
             Icons.account_balance_wallet,
+            size: 33.0,
+//            color: _currentIndex == 0 ? Colors.blue : Colors.blueGrey,
           ),
           onPressed: () {
             setState(() {
@@ -117,6 +124,8 @@ class MainState extends State<MainWidget> {
           padding: EdgeInsets.all(0.0),
           icon: new Icon(
             Icons.person,
+            size: 33.0,
+//            color: _currentIndex == 1 ? Colors.blue : Colors.blueGrey,
           ),
           onPressed: () {
             setState(() {
@@ -169,9 +178,23 @@ class MainState extends State<MainWidget> {
   void _toApplyInfo() {}
 
   _getDrawer() {
+    var themeList = kAllGalleryThemes.map((theme) {
+      return new RadioListTile(
+        title: new Text(theme.name),
+        secondary: new Icon(theme.icon),
+        value: theme,
+        groupValue: 'theme',
+        onChanged: (item) {
+          setState(() {
+            _themeData = theme.theme;
+          });
+        },
+        selected: _themeData == theme.theme,
+      );
+    }).toList();
     return new Drawer(
-      child: new Center(
-        child: new Text('This is a drawer'),
+      child: new ListView(
+        children: themeList,
       ),
     );
   }

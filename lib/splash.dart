@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jkd_flutter/login.dart';
 import 'package:jkd_flutter/main.dart';
+import 'package:jkd_flutter/main_list.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
 
 import 'utils/sp_utils.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => new LoginWidget(),
         '/main': (BuildContext context) => new MainWidget(),
+        '/list': (BuildContext context) => new MainListWidget(),
       },
     );
   }

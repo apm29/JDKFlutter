@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
 import 'package:jkd_flutter/theme.dart';
 import 'package:jkd_flutter/utils/sp_utils.dart';
+import 'package:jkd_flutter/utils/utils.dart';
 
 class MainWidget extends StatefulWidget {
   @override
@@ -29,6 +30,13 @@ class MainState extends State<MainWidget> {
     _getToken();
     _getApplication();
     _getProfile();
+    _initTheme();
+  }
+
+  void _initTheme() async {
+    var index = await SPUtils.get('themeIndex');
+    if (index == null) index = 0;
+    _themeData = kAllGalleryThemes[index].theme;
   }
 
   @override
@@ -197,7 +205,9 @@ class MainState extends State<MainWidget> {
   }
 
   void _toApplyInfo() {
-    _getBatteryLevel();
+    //_getBatteryLevel();
+    showToast(null, "toApplyInfo");
+    Navigator.of(context).pushNamed('/list');
   }
 
   _getDrawer() {
@@ -206,13 +216,17 @@ class MainState extends State<MainWidget> {
         title: new Text(theme.name),
         secondary: new Icon(theme.icon),
         value: theme,
-        groupValue: 'theme',
+        groupValue: "GalleryTheme",
         onChanged: (item) {
+          var indexOf = kAllGalleryThemes.indexOf(item);
+          if (indexOf == null) indexOf = 0;
+          SPUtils.put('themeIndex', indexOf);
           setState(() {
             _themeData = theme.theme;
           });
         },
-        selected: _themeData == theme.theme,
+        selected:
+            _themeData.primaryColor.value == theme.theme.primaryColor.value,
       );
     }).toList();
     return new Drawer(

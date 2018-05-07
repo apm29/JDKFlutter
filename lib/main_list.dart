@@ -13,9 +13,9 @@ class MainListState extends State<MainListWidget>
     with TickerProviderStateMixin {
   ThemeData _themeData;
   List<String> _list = [
-    "Animation",
+    "AnimatedList",
     "Navigator",
-    "List",
+    "Container",
     "Widget",
     "Layout",
     "Gesture",
@@ -24,6 +24,7 @@ class MainListState extends State<MainListWidget>
 
   AnimationController controller;
   ScrollController scrollController = new ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -62,9 +63,38 @@ class MainListState extends State<MainListWidget>
       controller: scrollController,
       physics: new BouncingScrollPhysics(),
       itemBuilder: (context, index) {
-        return new Container(
-          height: 200.0,
-          child: new Align(child: new Text(_list[index])),
+        return new Row(
+            children: <Widget>[new Expanded(
+              child: new Container(
+                height: 100.0,
+                child: new Card(
+                    margin: EdgeInsets.zero,
+                    elevation: 11.0,
+                    child: new InkWell(
+                      radius: 16.0,
+                      splashColor: Colors.black,
+                      highlightColor: Colors.indigo,
+                      borderRadius: new BorderRadius.all(
+                          new Radius.circular(100.0)),
+                      child: new Align(
+                        child: new Text(_list[index]),
+
+                      ),
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true)
+                            .pushNamed(
+                            "/" + _list[index].toLowerCase());
+                      },
+                    )
+
+                )
+                ,
+
+              )
+              ,
+            )
+              ,
+            ]
         );
       },
       itemCount: _list.length,

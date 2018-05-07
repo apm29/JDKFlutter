@@ -111,7 +111,7 @@ class MainState extends State<MainWidget> {
             child: new Center(
                 child: new RaisedButton(
               onPressed: _logout,
-              child: new Text(_batteryLevel),
+              child: new Text("登出"),
 //              color: Colors.yellow[600],
             )),
           ),

@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:jkd_flutter/anim_list.dart';
+import 'package:jkd_flutter/container_test.dart';
 import 'package:jkd_flutter/login.dart';
 import 'package:jkd_flutter/home.dart';
 import 'package:jkd_flutter/main_list.dart';
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
         '/login': (BuildContext context) => new LoginWidget(),
         '/main': (BuildContext context) => new MainWidget(),
         '/list': (BuildContext context) => new MainListWidget(),
+        '/animatedlist': (BuildContext context) => new AnimList(),
+        '/container': (BuildContext context) => new ContainerTestWidget(),
       },
     );
   }

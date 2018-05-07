@@ -67,7 +67,7 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
               onPressed: () => controller.repeat(),
             ),
             new TextField(
-              decoration: new InputDecoration(hintText: '用户名'),
+              decoration: new InputDecoration(hintText: '电话Tel'),
               style: new TextStyle(fontSize: 18.0, color: Colors.black),
               onChanged: (txt) {
                 userName = txt;

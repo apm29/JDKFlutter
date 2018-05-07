@@ -24,6 +24,7 @@ class MainListState extends State<MainListWidget>
 
   AnimationController controller;
   ScrollController scrollController = new ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -62,9 +63,33 @@ class MainListState extends State<MainListWidget>
       controller: scrollController,
       physics: new BouncingScrollPhysics(),
       itemBuilder: (context, index) {
-        return new Container(
-          height: 200.0,
-          child: new Align(child: new Text(_list[index])),
+        final item = _list[index];
+        return new Dismissible(
+          key: new Key(item),
+          child: new Container(
+            height: 200.0,
+            child: new Align(child: new Text(item)),
+          ),
+          background: new Container(
+            color: Colors.red,
+            padding: new EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+            alignment: Alignment.centerRight,
+            child: new Text(
+              'Delete',
+              textAlign: TextAlign.center,
+              style: new TextStyle(color: Colors.white, fontSize: 20.0),
+            ),
+          ),
+          onDismissed: (direction) {
+            Scaffold.of(context).showSnackBar(new SnackBar(
+                  content: new Text(
+                    'Item $item Removed',
+                    textAlign: TextAlign.center,
+                    style: new TextStyle(color: Colors.white, fontSize: 20.0),
+                  ),
+                  duration: new Duration(seconds: 3),
+                ));
+          },
         );
       },
       itemCount: _list.length,

@@ -2,15 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:jkd_flutter/login.dart';
 import 'package:jkd_flutter/home.dart';
+import 'package:jkd_flutter/login.dart';
 import 'package:jkd_flutter/main_list.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
 
 import 'utils/sp_utils.dart';
 
 void main() {
+  var methodChannel = const MethodChannel("yjw");
+  methodChannel.setMethodCallHandler((MethodCall methodCall) {
+    print(methodCall.method);
+    print(methodCall.arguments);
+  });
   return runApp(new MyApp());
 }
 
@@ -18,6 +24,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print("height:" + context.size.height.toString());
+    print("width:" + context.size.width.toString());
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
@@ -61,6 +69,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isFirst = true;
+
   @override
   Widget build(BuildContext context) {
     if (isFirst) {

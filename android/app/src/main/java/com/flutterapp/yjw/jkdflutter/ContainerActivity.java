@@ -17,6 +17,7 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 public class ContainerActivity extends FlutterActivity {
 
     private Toast mToast;
+    private MethodChannel mMethodChannel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,8 @@ public class ContainerActivity extends FlutterActivity {
         System.out.println("ContainerActivity");
 
         GeneratedPluginRegistrant.registerWith(this);
-        new MethodChannel(getFlutterView(), "yjw")
+        mMethodChannel = new MethodChannel(getFlutterView(), "yjw");
+        mMethodChannel
                 .setMethodCallHandler(new MethodChannel.MethodCallHandler() {
                     @Override
                     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
@@ -49,12 +51,17 @@ public class ContainerActivity extends FlutterActivity {
                                     result.error("UNAVAILABLE", "TEXT NOT PROVIDED.", null);
                                 }
                                 break;
+                            case "finish":
+                                result.success(null);
+                                finish();
+                                break;
                             default:
                                 result.notImplemented();
 
                         }
                     }
                 });
+        mMethodChannel.invokeMethod("doOnCreate",null);
     }
 
 
@@ -78,5 +85,35 @@ public class ContainerActivity extends FlutterActivity {
         }
 
         return batteryLevel;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMethodChannel.invokeMethod("doOnResume",null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMethodChannel.invokeMethod("doOnDestroy",null);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMethodChannel.invokeMethod("doOnResume",null);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mMethodChannel.invokeMethod("doOnPause",null);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMethodChannel.invokeMethod("doOnLowMemory",null);
     }
 }

@@ -22,7 +22,7 @@ class MainState extends State<MainWidget> {
 
   String _buttonText = '立即放款';
 
-  var _themeData = kAllGalleryThemes[0].theme;
+  GalleryTheme _themeData = kAllGalleryThemes[0];
 
   @override
   void initState() {
@@ -36,14 +36,14 @@ class MainState extends State<MainWidget> {
   void _initTheme() async {
     var index = await SPUtils.get('themeIndex');
     if (index == null) index = 0;
-    _themeData = kAllGalleryThemes[index].theme;
+    _themeData = kAllGalleryThemes[index];
   }
 
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Main Page',
-      theme: _themeData,
+      theme: _themeData.theme,
       home: new Scaffold(
         body: _getBody(),
         bottomNavigationBar: new BottomNavigationBar(
@@ -111,7 +111,7 @@ class MainState extends State<MainWidget> {
             child: new Center(
                 child: new RaisedButton(
               onPressed: _logout,
-              child: new Text(_batteryLevel),
+              child: new Text('Logout'),
 //              color: Colors.yellow[600],
             )),
           ),
@@ -216,17 +216,17 @@ class MainState extends State<MainWidget> {
         title: new Text(theme.name),
         secondary: new Icon(theme.icon),
         value: theme,
-        groupValue: "GalleryTheme",
+        groupValue: _themeData,
         onChanged: (item) {
           var indexOf = kAllGalleryThemes.indexOf(item);
           if (indexOf == null) indexOf = 0;
           SPUtils.put('themeIndex', indexOf);
           setState(() {
-            _themeData = theme.theme;
+            _themeData = theme;
           });
         },
-        selected:
-            _themeData.primaryColor.value == theme.theme.primaryColor.value,
+        selected: _themeData.theme.primaryColor.value ==
+            theme.theme.primaryColor.value,
       );
     }).toList();
     return new Drawer(
@@ -238,5 +238,7 @@ class MainState extends State<MainWidget> {
 
   void _logout() {
     SPUtils.put(API.access_token, '');
+    var methodChannel = const MethodChannel('yjw');
+    methodChannel.invokeMethod("finish");
   }
 }

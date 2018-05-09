@@ -4,7 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:jkd_flutter/anim_list.dart';
+import 'package:jkd_flutter/container_test.dart';
 import 'package:jkd_flutter/home.dart';
+import 'package:jkd_flutter/listview_test.dart';
 import 'package:jkd_flutter/login.dart';
 import 'package:jkd_flutter/main_list.dart';
 import 'package:jkd_flutter/model/api/api_interface.dart';
@@ -24,8 +27,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    print("height:" + context.size.height.toString());
-    print("width:" + context.size.width.toString());
     return new MaterialApp(
       title: 'Flutter Demo',
       theme: new ThemeData(
@@ -44,6 +45,9 @@ class MyApp extends StatelessWidget {
         '/login': (BuildContext context) => new LoginWidget(),
         '/main': (BuildContext context) => new MainWidget(),
         '/list': (BuildContext context) => new MainListWidget(),
+        '/animatedlist': (BuildContext context) => new AnimList(),
+        '/container': (BuildContext context) => new ContainerTestWidget(),
+        '/listview': (BuildContext context) => new ListViewTestWidget(),
       },
     );
   }
@@ -124,13 +128,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void toMain(BuildContext context) {
     print('to main');
-    Navigator.of(context).pushNamed('/main');
+    Navigator.of(context).pushReplacementNamed('/main');
     isFirst = false;
   }
 
   void toLogin(BuildContext context) {
     print('to login');
-    Navigator.of(context).pushNamed('/login');
+    Navigator.of(context).pushReplacementNamed('/login');
     isFirst = false;
   }
 

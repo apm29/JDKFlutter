@@ -13,10 +13,10 @@ class MainListState extends State<MainListWidget>
     with TickerProviderStateMixin {
   ThemeData _themeData;
   List<String> _list = [
-    "Animation",
+    "AnimatedList",
     "Navigator",
-    "List",
-    "Widget",
+    "Container",
+    "ListView",
     "Layout",
     "Gesture",
     "Else"
@@ -36,7 +36,9 @@ class MainListState extends State<MainListWidget>
   void _initTheme() async {
     var index = await SPUtils.get('themeIndex');
     if (index == null) index = 0;
-    _themeData = kAllGalleryThemes[index].theme;
+    setState(() {
+      _themeData = kAllGalleryThemes[index].theme;
+    });
   }
 
   @override
@@ -63,34 +65,31 @@ class MainListState extends State<MainListWidget>
       controller: scrollController,
       physics: new BouncingScrollPhysics(),
       itemBuilder: (context, index) {
-        final item = _list[index];
-        return new Dismissible(
-          key: new Key(item),
-          child: new Container(
-            height: 200.0,
-            child: new Align(child: new Text(item)),
-          ),
-          background: new Container(
-            color: Colors.red,
-            padding: new EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-            alignment: Alignment.centerRight,
-            child: new Text(
-              'Delete',
-              textAlign: TextAlign.center,
-              style: new TextStyle(color: Colors.white, fontSize: 20.0),
+        return new Row(children: <Widget>[
+          new Expanded(
+            child: new Container(
+              height: 100.0,
+              child: new Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 11.0,
+                  child: new InkWell(
+                    radius: 16.0,
+                    splashColor: Colors.black,
+                    highlightColor: Colors.indigo,
+                    borderRadius:
+                        new BorderRadius.all(new Radius.circular(100.0)),
+                    child: new Align(
+                      child: new Text(_list[index]),
+                    ),
+                    onTap: () {
+                      Navigator
+                          .of(context, rootNavigator: true)
+                          .pushNamed("/" + _list[index].toLowerCase());
+                    },
+                  )),
             ),
           ),
-          onDismissed: (direction) {
-            Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text(
-                    'Item $item Removed',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(color: Colors.white, fontSize: 20.0),
-                  ),
-                  duration: new Duration(seconds: 3),
-                ));
-          },
-        );
+        ]);
       },
       itemCount: _list.length,
     );

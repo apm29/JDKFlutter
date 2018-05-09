@@ -238,7 +238,6 @@ class MainState extends State<MainWidget> {
 
   void _logout() {
     SPUtils.put(API.access_token, '');
-    var methodChannel = const MethodChannel('yjw');
-    methodChannel.invokeMethod("finish");
+    Navigator.pushReplacementNamed(context, '/login');
   }
 }

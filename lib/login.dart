@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:http/http.dart' as http;
 import 'package:jkd_flutter/model/api/api_interface.dart';
@@ -28,13 +29,15 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
   AnimationController controller;
   CurvedAnimation curve;
 
+  TextEditingController _textController;
+
   @override
   void initState() {
     super.initState();
     controller = new AnimationController(
         duration: const Duration(milliseconds: 5000), vsync: this);
     curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
-
+    _textController = new TextEditingController();
     controller.forward();
   }
 
@@ -46,6 +49,11 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
   @override
   Widget build(BuildContext context) {
     this.context = context;
+    var whitelistingTextInputFormatter =
+        new WhitelistingTextInputFormatter(new RegExp(r'[0987654321]'));
+    //WhitelistingTextInputFormatter.digitsOnly;
+    var lengthLimitTextInputFormatter =
+        new LengthLimitingTextInputFormatter(11);
     return new Scaffold(
       appBar: new AppBar(title: new Text("Login")),
       body: new Container(
@@ -67,8 +75,13 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
               onPressed: () => controller.repeat(),
             ),
             new TextField(
+              controller: _textController,
               decoration: new InputDecoration(hintText: '电话Tel'),
               style: new TextStyle(fontSize: 18.0, color: Colors.black),
+              inputFormatters: [
+                whitelistingTextInputFormatter,
+                lengthLimitTextInputFormatter
+              ],
               onChanged: (txt) {
                 userName = txt;
               },
@@ -151,7 +164,7 @@ class LoginState extends State<LoginWidget> implements TickerProvider {
       Map<String, dynamic> loginResult = baseBean['data'];
       SPUtils.put(API.access_token, loginResult['access_token']);
       print("save_token:" + loginResult['access_token']);
-      Navigator.pushNamed(context, '/main');
+      Navigator.pushReplacementNamed(context, '/main');
     }
   }
 

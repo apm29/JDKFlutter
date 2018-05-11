@@ -62,6 +62,7 @@ public class ContainerActivity extends FlutterActivity {
                     }
                 });
         mMethodChannel.invokeMethod("doOnCreate",null);
+
     }
 
 

@@ -11,7 +11,8 @@ class ListViewTestWidget extends StatefulWidget {
 
 class Data {
   String content;
-
+  Sink<String> get sink => controller.sink;
+  final controller = StreamController<String>();
   Data(this.content);
 }
 
@@ -26,6 +27,7 @@ class ListViewState extends State<ListViewTestWidget> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+      theme: Theme.of(context),
       home: new Scaffold(
         body: new RefreshIndicator(
           color: Colors.amberAccent,

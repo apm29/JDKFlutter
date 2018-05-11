@@ -208,6 +208,8 @@ class MainState extends State<MainWidget> {
     //_getBatteryLevel();
     showToast(null, "toApplyInfo");
     Navigator.of(context).pushNamed('/list');
+    print(context.size.height);
+    print(context.size.width);
   }
 
   _getDrawer() {
